@@ -29,11 +29,12 @@ class AuthenticationControllerTest(@Autowired val mockMvc: MockMvc) {
 
         val userResponse = UserDto.fromDto(userRequest)
 
+        //when
         every { userService.saveUser(any()) } returns  userResponse
         every { userService.findByUsername(any()) } returns Optional.empty()
         every { userService.findByEmail(any()) } returns Optional.empty()
 
-        //when
+        //then
         mockMvc.post("/auth/signup") {
             contentType = MediaType.APPLICATION_JSON
             content = ObjectMapper().writeValueAsString(userRequest)
