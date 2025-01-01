@@ -6,6 +6,7 @@ import com.groupcreativesolution.authuser.dtos.UserView
 import com.groupcreativesolution.authuser.models.UserModel
 import com.groupcreativesolution.authuser.repositories.specifications.UserModelSpecification
 import com.groupcreativesolution.authuser.services.UserService
+import org.apache.catalina.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -25,8 +26,16 @@ import java.util.*
 class UserController @Autowired constructor(private val userService: UserService) {
 
     @GetMapping
-    fun getAllUser(@PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable, specification: UserModelSpecification): ResponseEntity<Page<UserModel>> {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findAllUserPageable(pageable, specification))
+    fun getAllUser(@PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable,
+                   specification: UserModelSpecification,
+                   @RequestParam(value = "courseId", required = false) courseId: UUID?
+    ): ResponseEntity<Page<UserModel>> {
+        val users: Page<UserModel> = if (courseId != null) {
+            userService.findAllUserPageable(pageable, specification.findByCourseId(courseId).and(specification))
+        } else {
+            userService.findAllUserPageable(pageable, specification)
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(users)
     }
 
     @GetMapping("/{userId}")

@@ -5,6 +5,7 @@ import com.groupcreativesolution.authuser.models.UserModel
 import com.groupcreativesolution.authuser.repositories.specifications.UserModelSpecification
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import java.util.*
 
 interface UserService {
@@ -16,5 +17,5 @@ interface UserService {
     fun findByUsername(userName: String): Optional<UserModel>
     fun findByEmail(email: String): Optional<UserModel>
     fun updateUser(user: UserModel)
-    fun findAllUserPageable(pageableDefault: Pageable, specification: UserModelSpecification): Page<UserModel>
+    fun findAllUserPageable(pageableDefault: Pageable, specification: Specification<UserModel>): Page<UserModel>
 }

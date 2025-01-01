@@ -5,9 +5,11 @@ import com.groupcreativesolution.authuser.models.UserModel
 import com.groupcreativesolution.authuser.repositories.UserRepository
 import com.groupcreativesolution.authuser.repositories.specifications.UserModelSpecification
 import com.groupcreativesolution.authuser.services.UserService
+import org.apache.catalina.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -44,7 +46,7 @@ class UserServiceImpl @Autowired constructor(private val userRepository: UserRep
         userRepository.save(user)
     }
 
-    override fun findAllUserPageable(pageableDefault: Pageable, specification: UserModelSpecification): Page<UserModel> {
+    override fun findAllUserPageable(pageableDefault: Pageable, specification: Specification<UserModel>): Page<UserModel> {
         return userRepository.findAll(specification, pageableDefault)
     }
 }
