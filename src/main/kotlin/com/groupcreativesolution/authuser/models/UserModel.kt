@@ -3,8 +3,10 @@ package com.groupcreativesolution.authuser.models
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.groupcreativesolution.authuser.enums.UserStatus
 import com.groupcreativesolution.authuser.enums.UserType
+import com.groupcreativesolution.authuser.models.UserCourseModel
 import jakarta.persistence.*
 import java.io.Serializable
 import java.util.*
@@ -55,7 +57,11 @@ class UserModel(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var userType: UserType? = null
+    var userType: UserType? = null,
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    var userCourses: Set<UserCourseModel>? = null
 
 ): Serializable {
     companion object {
