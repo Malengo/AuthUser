@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest
 class RestResponsePage<T> @JsonCreator constructor(
     @JsonProperty("content") content: List<T> = emptyList(),
     @JsonProperty("number") number: Int = 0,
-    @JsonProperty("size") size: Int = 0,
+    @JsonProperty("size") size: Int = 1,
     @JsonProperty("totalElements") totalElements: Long = 0L,
     @JsonProperty("pageable") pageable: JsonNode? = null,
     @JsonProperty("last") last: Boolean = false,
