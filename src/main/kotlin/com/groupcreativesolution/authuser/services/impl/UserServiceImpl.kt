@@ -3,9 +3,7 @@ package com.groupcreativesolution.authuser.services.impl
 import com.groupcreativesolution.authuser.dtos.UserDto
 import com.groupcreativesolution.authuser.models.UserModel
 import com.groupcreativesolution.authuser.repositories.UserRepository
-import com.groupcreativesolution.authuser.repositories.specifications.UserModelSpecification
 import com.groupcreativesolution.authuser.services.UserService
-import org.apache.catalina.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,8 +18,8 @@ class UserServiceImpl @Autowired constructor(private val userRepository: UserRep
         return userRepository.findAll()
     }
 
-    override fun findById(userId: UUID): Optional<UserModel> {
-        return userRepository.findById(userId)
+    override fun findById(userId: UUID): UserModel? {
+        return userRepository.findById(userId).orElse(null)
     }
 
     override fun deleteUser(user: UserModel) {

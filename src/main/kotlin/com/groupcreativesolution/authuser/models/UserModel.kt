@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.groupcreativesolution.authuser.enums.UserStatus
 import com.groupcreativesolution.authuser.enums.UserType
-import com.groupcreativesolution.authuser.models.UserCourseModel
 import jakarta.persistence.*
 import java.io.Serializable
 import java.util.*
@@ -67,5 +66,9 @@ class UserModel(
     companion object {
         @Transient
         const val serialVersionUID = 1L
+    }
+
+    fun convertToUserCourseModel(courseId: UUID): UserCourseModel {
+        return UserCourseModel(null, this, courseId)
     }
 }

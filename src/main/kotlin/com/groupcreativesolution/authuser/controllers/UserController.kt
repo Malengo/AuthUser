@@ -6,7 +6,6 @@ import com.groupcreativesolution.authuser.dtos.UserView
 import com.groupcreativesolution.authuser.models.UserModel
 import com.groupcreativesolution.authuser.repositories.specifications.UserModelSpecification
 import com.groupcreativesolution.authuser.services.UserService
-import org.apache.catalina.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,23 +39,15 @@ class UserController @Autowired constructor(private val userService: UserService
 
     @GetMapping("/{userId}")
     fun getOneUser(@PathVariable(value = "userId") userId: UUID): ResponseEntity<Any> {
-        val user: Optional<UserModel> = userService.findById(userId)
-        if (!user.isPresent) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(user.get())
-        }
+        val user: UserModel = userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+        return ResponseEntity.status(HttpStatus.OK).body(user)
     }
 
     @DeleteMapping("/{userId}")
     fun deleteUser(@PathVariable(value = "userId") userId: UUID): ResponseEntity<Any> {
-        val user = userService.findById(userId)
-        if (!user.isPresent) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
-        } else {
-            userService.deleteUser(user.get())
-            return ResponseEntity.status(HttpStatus.OK).body("User delete success")
-        }
+        val user: UserModel = userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+        userService.deleteUser(user)
+        return ResponseEntity.status(HttpStatus.OK).body("User delete success")
     }
 
     @PutMapping("/{userId}")
@@ -65,19 +56,18 @@ class UserController @Autowired constructor(private val userService: UserService
         @RequestBody @Validated(UserView.UserPut::class)
         @JsonView(UserView.UserPut::class) userDTO: UserDto
     ): ResponseEntity<Any> {
-        val user = userService.findById(userId)
-        if (!user.isPresent) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
-        } else {
-            val userModel = user.get()
-            userModel.fullName = userDTO.fullName
-            userModel.phoneNumber = userDTO.phoneNumber
-            userModel.cpf = userDTO.cpf
-            userModel.updatedAt = LocalDateTime.now(ZoneId.of("UTC")).toString()
-            userService.updateUser(userModel)
-            return ResponseEntity.status(HttpStatus.OK).body(userModel)
-        }
+        val user: UserModel =
+            userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+
+        val userModel = user
+        userModel.fullName = userDTO.fullName
+        userModel.phoneNumber = userDTO.phoneNumber
+        userModel.cpf = userDTO.cpf
+        userModel.updatedAt = LocalDateTime.now(ZoneId.of("UTC")).toString()
+        userService.updateUser(userModel)
+        return ResponseEntity.status(HttpStatus.OK).body(userModel)
     }
+
 
     @PutMapping("/{userId}/password")
     fun updatePassword(
@@ -86,13 +76,12 @@ class UserController @Autowired constructor(private val userService: UserService
         @Validated(UserView.PasswordPut::class)
         @JsonView(UserView.PasswordPut::class) userDTO: UserDto
     ): ResponseEntity<Any> {
-        val user = userService.findById(userId)
-        if (!user.isPresent) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
-        } else if (!user.get().password.equals(userDTO.oldPassword)) {
+        val user: UserModel =
+            userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+        if (!user.password.equals(userDTO.oldPassword)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect")
         } else {
-            val userModel = user.get()
+            val userModel = user
             userModel.password = userDTO.password
             userModel.updatedAt = LocalDateTime.now(ZoneId.of("UTC")).toString()
             userService.updateUser(userModel)
@@ -106,16 +95,14 @@ class UserController @Autowired constructor(private val userService: UserService
         @RequestBody @Validated(UserView.ImagePut::class)
         @JsonView(UserView.ImagePut::class) userDTO: UserDto
     ): ResponseEntity<Any> {
-        val user = userService.findById(userId)
-        if (!user.isPresent) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
-        } else {
-            val userModel = user.get()
-            userModel.image = userDTO.imgUrl
-            userModel.updatedAt = LocalDateTime.now(ZoneId.of("UTC")).toString()
-            userService.updateUser(userModel)
-            return ResponseEntity.status(HttpStatus.OK).body(userModel)
-        }
+        val user: UserModel =
+            userService.findById(userId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+
+        val userModel = user
+        userModel.image = userDTO.imgUrl
+        userModel.updatedAt = LocalDateTime.now(ZoneId.of("UTC")).toString()
+        userService.updateUser(userModel)
+        return ResponseEntity.status(HttpStatus.OK).body(userModel)
     }
 
 }
